@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+    environment:
+      POSTGRES_DB: kaifunelly
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: upixfLQKNzYfvXOeUCEI
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+
+volumes:
+  db:
+    driver: local
