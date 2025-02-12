@@ -1,11 +1,13 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { join } from "path";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
-const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE } = process.env;
+import {
+  DB_HOST,
+  DB_PORT,
+  DB_USERNAME,
+  DB_PASSWORD,
+  DB_DATABASE,
+} from "./env-constants";
 
 export const AppDataSource = new DataSource({
   type: "postgres",

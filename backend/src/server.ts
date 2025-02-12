@@ -2,12 +2,6 @@ import "reflect-metadata";
 import express from "express";
 import { AppDataSource } from "./data-source";
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(express.json());
-
-// Initialize TypeORM
 AppDataSource.initialize()
   .then(() => {
     console.log("Data Source has been initialized!");
@@ -16,7 +10,11 @@ AppDataSource.initialize()
     console.error("Error during Data Source initialization:", error);
   });
 
-// Basic route
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Express + TypeScript + TypeORM server" });
 });
