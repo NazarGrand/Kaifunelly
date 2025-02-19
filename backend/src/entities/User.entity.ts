@@ -21,8 +21,8 @@ export class User {
   @Index({ unique: true })
   phone_number!: string;
 
-  @Column({ type: "enum", enum: UserRoles, nullable: true })
-  role?: UserRoles;
+  @Column({ type: "enum", enum: UserRoles })
+  role!: UserRoles;
 
   @Column({ type: "varchar" })
   password!: string;

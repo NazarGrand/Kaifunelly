@@ -9,6 +9,9 @@ import {
 } from "../common/dtos/AuthDto";
 import ms from "ms";
 import { plainToClass } from "class-transformer";
+import { User } from "../entities/User.entity";
+import jwt from "jsonwebtoken";
+import { constants } from "../env-constants";
 
 class AuthController {
   async registration(req: Request, res: Response) {
@@ -16,11 +19,7 @@ class AuthController {
       excludeExtraneousValues: true,
     });
 
-    console.log(dto);
-
     const errors = await validate(dto);
-
-    console.log(errors);
 
     if (errors.length > 0) {
       res.status(401).json(errors);
@@ -30,8 +29,10 @@ class AuthController {
     try {
       const userData = await AuthService.registration(dto);
       res.json(userData);
-    } catch (e: any) {
-      res.status(400).json({ message: e.message });
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        res.status(400).json({ message: e.message });
+      }
     }
   }
 
@@ -39,8 +40,6 @@ class AuthController {
     const dto = plainToClass(LoginUserDto, req.body, {
       excludeExtraneousValues: true,
     });
-
-    console.log(dto);
 
     const errors = await validate(dto);
 
@@ -55,15 +54,17 @@ class AuthController {
         maxAge: ms("14d"),
       });
 
-      const { password, refresh_token, refresh_token_exp_date, ...user }: any =
+      const { password, refresh_token, refresh_token_exp_date, ...user }: User =
         userData.user;
 
       res.json({
         accessToken: userData.accessToken,
         user: user,
       });
-    } catch (e: any) {
-      res.status(401).json({ message: e.message });
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        res.status(401).json({ message: e.message });
+      }
     }
   }
 
@@ -80,24 +81,31 @@ class AuthController {
     try {
       const userData = await AuthService.refreshToken(dto.refresh_token);
 
-      const { password, refresh_token, refresh_token_exp_date, ...user }: any =
+      const { password, refresh_token, refresh_token_exp_date, ...user }: User =
         userData.user;
 
       res.json({
         accessToken: userData.accessToken,
         user: user,
       });
-    } catch (e: any) {
-      res.status(401).json({ message: e.message });
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        res.status(401).json({ message: e.message });
+      }
     }
   }
 
   async verifyUser(req: Request, res: Response) {
-    const dto = plainToClass(VerifyUserDto, req.body, {
+    const decoded = jwt.verify(req.body, constants.JWT_ACCESS_SECRET!);
+
+    if (!decoded) {
+      res.status(401).json({ message: "Invalid token" });
+    }
+
+    const dto = plainToClass(VerifyUserDto, decoded, {
       excludeExtraneousValues: true,
     });
 
-    console.log(dto);
     const errors = await validate(dto);
 
     if (errors.length > 0) {
@@ -105,10 +113,36 @@ class AuthController {
     }
 
     try {
-      const userData = await AuthService.verifyUser(dto.verificationCode);
+      const userData = await AuthService.verifyUser(
+        dto.verificationCode,
+        dto.userId,
+      );
       res.json(userData);
-    } catch (e: any) {
-      res.status(401).json({ message: e.message });
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        res.status(401).json({ message: e.message });
+      }
+    }
+  }
+
+  async me(req: Request, res: Response) {
+    try {
+      const { _id } = req.body.user;
+      const userData = await AuthService.me(_id);
+
+      const {
+        password,
+        refresh_token,
+        refresh_token_exp_date,
+        createdAt,
+        ...user
+      }: User = userData;
+
+      res.json(user);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        res.status(401).json({ message: e.message });
+      }
     }
   }
 }
