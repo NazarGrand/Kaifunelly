@@ -9,7 +9,7 @@ import { constants } from "../env-constants";
 import { UserRoles } from "../common/enums/UserRoles";
 import { LoginUserDto, RegisterUserDto } from "../common/dtos/AuthDto";
 import dayjs from "dayjs";
-import { sendVerificationCode } from "./MailService";
+import { sendVerificationEmail } from "./MailService";
 import ValidationError from "../common/validators/ValidationError";
 
 class AuthService {
@@ -59,7 +59,7 @@ class AuthService {
       { expiresIn: "1h" },
     );
 
-    await sendVerificationCode(user.email, user.first_name, verificationToken);
+    await sendVerificationEmail(user.email, user.first_name, verificationToken);
 
     return { message: "User registered successfully" };
   }
@@ -69,7 +69,7 @@ class AuthService {
     const user = await this.userRepository.findOneBy({ email });
 
     if (!user) {
-      throw new ValidationError("No such user exists", 404);
+      throw new ValidationError("No such user exists", 400);
     }
 
     const isPasswordValid = await bcrypt.compare(
@@ -78,7 +78,7 @@ class AuthService {
     );
 
     if (!isPasswordValid) {
-      throw new ValidationError("Invalid email or password", 401);
+      throw new ValidationError("Invalid email or password", 400);
     }
 
     const verification = await this.verificationRepository.findOne({
@@ -107,7 +107,7 @@ class AuthService {
           { expiresIn: "1h" },
         );
 
-        await sendVerificationCode(
+        await sendVerificationEmail(
           user.email,
           user.first_name,
           verificationToken,
@@ -115,12 +115,12 @@ class AuthService {
 
         throw new ValidationError(
           "Account not verified. Please check your email for the verification link.",
-          403,
+          400,
         );
       } else {
         throw new ValidationError(
           "Account is not verified. Please verify your account.",
-          403,
+          400,
         );
       }
     }
@@ -153,7 +153,7 @@ class AuthService {
       !user.refresh_token_exp_date ||
       dayjs(user.refresh_token_exp_date).isBefore(dayjs())
     ) {
-      throw new ValidationError("Invalid or expired refresh token", 401);
+      throw new ValidationError("Invalid or expired refresh token", 400);
     }
 
     const accessToken = this.generateAccessToken(user);
@@ -199,7 +199,7 @@ class AuthService {
     const user = await this.userRepository.findOne({ where: { id: idUser } });
 
     if (!user) {
-      throw new ValidationError("No such user exists", 404);
+      throw new ValidationError("No such user exists", 400);
     }
 
     const {

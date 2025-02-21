@@ -35,12 +35,6 @@ class AuthController {
         res.status(error.statusCode).json({ message: error.message });
       }
 
-      if (error instanceof Error) {
-        res
-          .status(500)
-          .json({ message: error.message || "Internal Server Error" });
-      }
-
       res.status(500).json({ message: "Internal Server Error" });
     }
   }
@@ -72,12 +66,6 @@ class AuthController {
         res.status(error.statusCode).json({ message: error.message });
       }
 
-      if (error instanceof Error) {
-        res
-          .status(500)
-          .json({ message: error.message || "Internal Server Error" });
-      }
-
       res.status(500).json({ message: "Internal Server Error" });
     }
   }
@@ -102,12 +90,6 @@ class AuthController {
     } catch (error: unknown) {
       if (error instanceof ValidationError) {
         res.status(error.statusCode).json({ message: error.message });
-      }
-
-      if (error instanceof Error) {
-        res
-          .status(500)
-          .json({ message: error.message || "Internal Server Error" });
       }
 
       res.status(500).json({ message: "Internal Server Error" });
@@ -145,12 +127,6 @@ class AuthController {
         res.status(error.statusCode).json({ message: error.message });
       }
 
-      if (error instanceof Error) {
-        res
-          .status(500)
-          .json({ message: error.message || "Internal Server Error" });
-      }
-
       res.status(500).json({ message: "Internal Server Error" });
     }
   }
@@ -164,12 +140,6 @@ class AuthController {
     } catch (error: unknown) {
       if (error instanceof ValidationError) {
         res.status(error.statusCode).json({ message: error.message });
-      }
-
-      if (error instanceof Error) {
-        res
-          .status(500)
-          .json({ message: error.message || "Internal Server Error" });
       }
 
       res.status(500).json({ message: "Internal Server Error" });
