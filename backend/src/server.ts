@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import express from "express";
-import { AppDataSource } from "./data-source";
+import { AppDataSource } from "./db/data-source";
+import router from "./routes/index";
 
 AppDataSource.initialize()
   .then(() => {
@@ -14,6 +15,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+
+app.use(router);
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Express + TypeScript + TypeORM server" });
