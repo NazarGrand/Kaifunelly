@@ -153,7 +153,7 @@ class AuthService {
       !user.refresh_token_exp_date ||
       dayjs(user.refresh_token_exp_date).isBefore(dayjs())
     ) {
-      throw new ValidationError("Invalid or expired refresh token", 400);
+      throw new ValidationError("Invalid or expired refresh token", 401);
     }
 
     const accessToken = this.generateAccessToken(user);
