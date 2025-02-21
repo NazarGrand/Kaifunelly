@@ -1,7 +1,7 @@
 import { constants } from "../env-constants";
 import { sgMail } from "../config/SendGrid";
 
-export async function deliverMail(
+export async function sendVerificationCode(
   email: string,
   name: string,
   verificationCode: string,

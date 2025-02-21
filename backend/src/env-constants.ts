@@ -19,8 +19,6 @@ export const constants = {
   SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL,
   SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD,
   SUPER_ADMIN_PHONE: process.env.SUPER_ADMIN_PHONE,
-  SUPER_ADMIN_FIRST_NAME: process.env.SUPER_ADMIN_FIRST_NAME,
-  SUPER_ADMIN_LAST_NAME: process.env.SUPER_ADMIN_LAST_NAME,
 
   bcryptSalt: process.env.BCRYPT_SALT,
 };

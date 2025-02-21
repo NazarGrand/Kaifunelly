@@ -17,16 +17,16 @@ export const authMe = (req: Request, res: Response, next: NextFunction) => {
     const decoded = jwt.verify(
       token!,
       process.env.JWT_ACCESS_SECRET as string,
-    ) as JwtPayload;
+    ) as JwtPayload | null;
 
-    if (!decoded || typeof decoded !== "object" || !("user" in decoded)) {
-      res.status(401).json({ message: "Invalid token" });
+    if (!decoded) {
+      res.status(401).json({ message: "Invalid token structure" });
     }
 
-    req.body.user = (decoded as DecodedToken).user;
+    req.body.user = decoded as DecodedToken;
     next();
   } catch (error: unknown) {
-    console.error((error as Error).message);
+    console.error("Error during JWT verification:", (error as Error).message);
     res
       .status(401)
       .json({ message: "Internal server error at authMe middleware" });

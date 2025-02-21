@@ -9,7 +9,8 @@ import { constants } from "../env-constants";
 import { UserRoles } from "../common/enums/UserRoles";
 import { LoginUserDto, RegisterUserDto } from "../common/dtos/AuthDto";
 import dayjs from "dayjs";
-import { deliverMail } from "./MailService";
+import { sendVerificationCode } from "./MailService";
+import ValidationError from "../common/validators/ValidationError";
 
 class AuthService {
   private userRepository: Repository<User>;
@@ -26,32 +27,31 @@ class AuthService {
     });
 
     if (existingUser) {
-      throw new Error(`User with email ${userData.email} already exists`);
+      throw new ValidationError(
+        `User with email ${userData.email} already exists`,
+        400,
+      );
     }
 
     const hashedPassword = await bcrypt.hash(
       userData.password,
       parseInt(constants.bcryptSalt!),
     );
-    const user = this.userRepository.create({
+    const user = await this.userRepository.save({
       ...userData,
       password: hashedPassword,
       role: UserRoles.USER,
     });
 
-    await this.userRepository.save(user);
-
     const verificationCode = uuidv4();
-    const expireAt = dayjs().add(1, "hour");
+    const expireAt = dayjs().add(1, "hour").toDate();
 
-    const verification = this.verificationRepository.create({
+    await this.verificationRepository.save({
       verificationCode,
       user: { id: user.id },
       expireAt,
       isUsed: false,
     });
-
-    await this.verificationRepository.save(verification);
 
     const verificationToken = jwt.sign(
       { verificationCode, userId: user.id },
@@ -59,20 +59,26 @@ class AuthService {
       { expiresIn: "1h" },
     );
 
-    await deliverMail(user.email, user.first_name, verificationToken);
+    await sendVerificationCode(user.email, user.first_name, verificationToken);
 
     return { message: "User registered successfully" };
   }
 
   async login(userLogin: LoginUserDto) {
-    const { email, password } = userLogin;
+    const { email } = userLogin;
     const user = await this.userRepository.findOneBy({ email });
 
-    const isPasswordValid =
-      user && (await bcrypt.compare(password, user.password));
+    if (!user) {
+      throw new ValidationError("No such user exists", 404);
+    }
 
-    if (!user || !isPasswordValid) {
-      throw new Error("Invalid email or password");
+    const isPasswordValid = await bcrypt.compare(
+      userLogin.password,
+      user.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new ValidationError("Invalid email or password", 401);
     }
 
     const verification = await this.verificationRepository.findOne({
@@ -88,14 +94,12 @@ class AuthService {
           await this.verificationRepository.remove(verification);
         }
 
-        const newVerification = this.verificationRepository.create({
+        await this.verificationRepository.save({
           verificationCode,
           user,
           expireAt,
           isUsed: false,
         });
-
-        await this.verificationRepository.save(newVerification);
 
         const verificationToken = jwt.sign(
           { verificationCode, userId: user.id },
@@ -103,13 +107,21 @@ class AuthService {
           { expiresIn: "1h" },
         );
 
-        await deliverMail(user.email, user.first_name, verificationToken);
+        await sendVerificationCode(
+          user.email,
+          user.first_name,
+          verificationToken,
+        );
 
-        throw new Error(
+        throw new ValidationError(
           "Account not verified. Please check your email for the verification link.",
+          403,
         );
       } else {
-        throw new Error("Account is not verified. Please verify your account.");
+        throw new ValidationError(
+          "Account is not verified. Please verify your account.",
+          403,
+        );
       }
     }
 
@@ -121,7 +133,14 @@ class AuthService {
 
     await this.userRepository.save(user);
 
-    return { accessToken, refreshToken, user };
+    const {
+      password,
+      refresh_token,
+      refresh_token_exp_date,
+      ...userData
+    }: User = user;
+
+    return { accessToken, refreshToken, user: userData };
   }
 
   async refreshToken(refreshToken: string) {
@@ -134,11 +153,18 @@ class AuthService {
       !user.refresh_token_exp_date ||
       dayjs(user.refresh_token_exp_date).isBefore(dayjs())
     ) {
-      throw new Error("Invalid or expired refresh token");
+      throw new ValidationError("Invalid or expired refresh token", 401);
     }
 
     const accessToken = this.generateAccessToken(user);
-    return { accessToken, user };
+
+    const {
+      password,
+      refresh_token,
+      refresh_token_exp_date,
+      ...userData
+    }: User = user;
+    return { accessToken, user: userData };
   }
 
   async verifyUser(verificationCode: string, userId: number) {
@@ -148,31 +174,15 @@ class AuthService {
     });
 
     if (!verification) {
-      throw new Error("Invalid verification code or user");
+      throw new ValidationError("Invalid verification code or user", 400);
     }
 
     if (verification.isUsed) {
-      throw new Error("The user is already verified");
+      throw new ValidationError("The user is already verified", 400);
     }
 
     if (dayjs(verification.expireAt).isBefore(dayjs())) {
-      throw new Error("Verification code expired");
-    }
-
-    const duplicateVerifications = await this.verificationRepository.find({
-      where: { verificationCode },
-    });
-
-    if (duplicateVerifications.length > 1) {
-      const otherUserVerification = duplicateVerifications.find(
-        (verification) => verification.user.id !== userId,
-      );
-
-      if (otherUserVerification) {
-        throw new Error(
-          "This verification code has already been used by another user",
-        );
-      }
+      throw new ValidationError("Verification code expired", 400);
     }
 
     verification.isUsed = true;
@@ -183,16 +193,24 @@ class AuthService {
 
   async me(idUser: number) {
     if (!idUser) {
-      throw new Error("No such id user");
+      throw new ValidationError("User id not provided", 400);
     }
 
     const user = await this.userRepository.findOne({ where: { id: idUser } });
 
     if (!user) {
-      throw new Error("No such user exists");
+      throw new ValidationError("No such user exists", 404);
     }
 
-    return user;
+    const {
+      password,
+      refresh_token,
+      refresh_token_exp_date,
+      createdAt,
+      ...userData
+    }: User = user;
+
+    return userData;
   }
 
   private generateAccessToken(user: User) {

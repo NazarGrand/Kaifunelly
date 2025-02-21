@@ -8,7 +8,7 @@ import {
   MinLength,
 } from "class-validator";
 import { UserRoles } from "../enums/UserRoles";
-import { Expose } from "class-transformer";
+import { Expose, Transform } from "class-transformer";
 
 export class RegisterUserDto {
   @Expose()
@@ -66,6 +66,7 @@ export class VerifyUserDto {
   @Expose()
   @IsNotEmpty()
   @IsNumber()
+  @Transform(({ value }) => parseInt(value), { toClassOnly: true })
   userId!: number;
 
   @Expose()
