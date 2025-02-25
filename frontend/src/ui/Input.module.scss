@@ -1,0 +1,25 @@
+.root {
+  position: relative;
+  width: 100%;
+}
+
+.input {
+  height: 3rem !important;
+  border: 0.0625rem solid var(--element-color) !important;
+  color: var(--element-color) !important;
+  background-color: var(--mantine-color-neutral-1) !important;
+
+  &::placeholder {
+    color: var(--element-color) !important;
+  }
+}
+
+.label {
+  color: var(--element-color);
+  background-color: var(--mantine-color-neutral-1);
+  z-index: 1;
+}
+
+.error {
+  color: var(--mantine-color-error-0) !important;
+}

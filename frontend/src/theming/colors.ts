@@ -34,7 +34,7 @@ export const colorsTheme = {
     "#F6F6F6",
     "#EDEDED",
     "#CBCBCB",
-    "#B48484",
+    "#B4B4B4",
     "#9E9E9E",
     "#717171",
     "#505050",
