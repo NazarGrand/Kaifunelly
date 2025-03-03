@@ -1,8 +1,8 @@
-import { createTheme } from "@mantine/core";
+import { createTheme, MantineThemeOverride } from "@mantine/core";
 import { typography } from "./typography";
 import { colorsTheme } from "./colors";
 
-export const theme = createTheme({
+export const theme: MantineThemeOverride = createTheme({
   colors: colorsTheme,
 
   spacing: {
@@ -50,4 +50,26 @@ export const theme = createTheme({
   },
 
   other: typography,
+
+  components: {
+    TextInput: {
+      styles: {
+        root: {
+          position: "relative",
+          width: "100%",
+        },
+        input: {
+          height: "3rem",
+          backgroundColor: "var(--mantine-color-neutral-1)",
+        },
+        label: {
+          backgroundColor: "var(--mantine-color-neutral-1)",
+          zIndex: 1,
+        },
+        error: {
+          color: "var(--mantine-color-error-0)",
+        },
+      },
+    },
+  },
 });

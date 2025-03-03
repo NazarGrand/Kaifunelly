@@ -1,0 +1,12 @@
+.input {
+  border: 0.0625rem solid var(--element-color) !important;
+  color: var(--element-color) !important;
+
+  &::placeholder {
+    color: var(--element-color) !important;
+  }
+}
+
+.label {
+  color: var(--element-color);
+}
