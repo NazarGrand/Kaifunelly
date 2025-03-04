@@ -7,8 +7,8 @@ import { ReactComponent as Eye } from "../../assets/icons/Eye.svg";
 import { ReactComponent as EyeSlash } from "../../assets/icons/EyeSlash.svg";
 
 interface PasswordInputProps {
-  value?: string;
-  onChange?: (value: string) => void;
+  value: string;
+  onChange: (value: string) => void;
   label: string;
   placeholder?: string;
   error?: string;
@@ -30,8 +30,6 @@ const PasswordInput: FunctionComponent<PasswordInputProps> = ({
   const [focused, setFocused] = useState(false);
   const [hovered, setHovered] = useState(false);
 
-  const [inputValue, setInputValue] = useState<string>(value || "");
-
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const getElementColor = () => {
@@ -42,7 +40,7 @@ const PasswordInput: FunctionComponent<PasswordInputProps> = ({
         return "var(--mantine-color-primary-0)";
       case !!error:
         return "var(--mantine-color-error-0)";
-      case hovered:
+      case hovered || !!value:
         return "var(--mantine-color-neutral-8)";
       default:
         return "var(--mantine-color-neutral-6)";
@@ -52,17 +50,13 @@ const PasswordInput: FunctionComponent<PasswordInputProps> = ({
   const elementColor = getElementColor();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.currentTarget.value);
     onChange?.(event.currentTarget.value);
   };
 
   const inputType = showPassword ? "text" : "password";
 
   return (
-    <section
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+    <section onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
       <TextInput
         type={inputType}
         label={label}
@@ -74,7 +68,7 @@ const PasswordInput: FunctionComponent<PasswordInputProps> = ({
         disabled={disabled}
         error={!focused ? error : ""}
         {...props}
-        value={inputValue}
+        value={value}
         onChange={handleChange}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
@@ -86,16 +80,16 @@ const PasswordInput: FunctionComponent<PasswordInputProps> = ({
           },
           label: {
             position: "absolute",
-            top: focused || inputValue || error ? "0" : "50%",
-            left: focused || inputValue || error ? "0.75rem" : "2.5rem",
+            top: focused || value || error ? "0" : "50%",
+            left: focused || value || error ? "0.75rem" : "2.5rem",
             transform: "translateY(-50%)",
             transition: "all 150ms ease",
             fontSize:
-              focused || inputValue || error
+              focused || value || error
                 ? theme.other.bodyXS.fontSize
                 : theme.other.bodyMD.fontSize,
             fontWeight:
-              focused || inputValue || error
+              focused || value || error
                 ? theme.other.bodyXS.fontWeight
                 : theme.other.bodyMD.fontWeight,
             lineHeight: "auto",

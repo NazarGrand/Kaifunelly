@@ -40,6 +40,7 @@ export const colorsTheme = {
     "#505050",
     "#444444",
     "#202020",
+    "#2D2D2D",
   ] as const,
 
   error: [

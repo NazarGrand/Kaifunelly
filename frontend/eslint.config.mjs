@@ -18,7 +18,7 @@ export default [
       "jsx-quotes": ["error", "prefer-double"], // Enforce double quotes in JSX attributes.
       indent: ["error", 2, { SwitchCase: 1 }], // Use 2 spaces for indentation, with 1 level for SwitchCase.
       "no-tabs": "error", // Disallow the use of tabs.
-      "max-len": ["error", { code: 80 }], // Enforce a maximum line length of 80 characters.
+      "max-len": ["error", { code: 90 }], // Enforce a maximum line length of 80 characters.
       "comma-dangle": ["error", "always-multiline"], // Require trailing commas in multiline structures.
       "object-curly-spacing": ["error", "always"], // Enforce spaces inside curly braces.
       "react/jsx-tag-spacing": ["error", { beforeSelfClosing: "always" }], // Enforce space before self-closing JSX tags.

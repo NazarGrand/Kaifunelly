@@ -5,8 +5,8 @@ import { ReactComponent as ClearIcon } from "../../assets/icons/ClearIcon.svg";
 import classes from "./Input.module.scss";
 
 interface InputProps {
-  value?: string;
-  onChange?: (value: string) => void;
+  value: string;
+  onChange: (value: string) => void;
   label: string;
   placeholder?: string;
   error?: string;
@@ -28,8 +28,6 @@ const Input: FunctionComponent<InputProps> = ({
   const [focused, setFocused] = useState(false);
   const [hovered, setHovered] = useState(false);
 
-  const [inputValue, setInputValue] = useState<string>(value || "");
-
   const getElementColor = () => {
     switch (true) {
       case disabled:
@@ -38,7 +36,7 @@ const Input: FunctionComponent<InputProps> = ({
         return "var(--mantine-color-primary-0)";
       case !!error:
         return "var(--mantine-color-error-0)";
-      case hovered:
+      case hovered || !!value:
         return "var(--mantine-color-neutral-8)";
       default:
         return "var(--mantine-color-neutral-6)";
@@ -48,20 +46,15 @@ const Input: FunctionComponent<InputProps> = ({
   const elementColor = getElementColor();
 
   const handleClear = () => {
-    setInputValue("");
     onChange?.("");
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.currentTarget.value);
     onChange?.(event.currentTarget.value);
   };
 
   return (
-    <section
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+    <section onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
       <TextInput
         label={label}
         placeholder={focused || error ? placeholder : ""}
@@ -72,7 +65,7 @@ const Input: FunctionComponent<InputProps> = ({
         disabled={disabled}
         error={!focused ? error : ""}
         {...props}
-        value={inputValue}
+        value={value}
         onChange={handleChange}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
@@ -84,16 +77,16 @@ const Input: FunctionComponent<InputProps> = ({
           },
           label: {
             position: "absolute",
-            top: focused || inputValue || error ? "0" : "50%",
-            left: focused || inputValue || error ? "0.75rem" : "2.5rem",
+            top: focused || value || error ? "0" : "50%",
+            left: focused || value || error ? "0.75rem" : "2.5rem",
             transform: "translateY(-50%)",
             transition: "all 150ms ease",
             fontSize:
-              focused || inputValue || error
+              focused || value || error
                 ? theme.other.bodyXS.fontSize
                 : theme.other.bodyMD.fontSize,
             fontWeight:
-              focused || inputValue || error
+              focused || value || error
                 ? theme.other.bodyXS.fontWeight
                 : theme.other.bodyMD.fontWeight,
             lineHeight: "auto",
@@ -117,7 +110,7 @@ const Input: FunctionComponent<InputProps> = ({
             onClick={handleClear}
             style={{
               height: "1.5rem",
-              display: inputValue ? undefined : "none",
+              display: value ? undefined : "none",
             }}
             aria-label="Clear input"
           >

@@ -1,0 +1,22 @@
+.modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2.5rem 0 2.5rem !important;
+}
+
+.tab {
+  flex: 1;
+
+  &[data-active] {
+    .tabLabel {
+      color: var(--mantine-color-primary-0);
+    }
+  }
+}
+
+.tabLabel {
+  color: var(--mantine-color-neutral-8);
+}

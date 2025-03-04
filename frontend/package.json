@@ -5,6 +5,7 @@
   "dependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@mantine/core": "^7.17.0",
+    "@mantine/form": "^7.17.1",
     "@mantine/hooks": "^7.17.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
