@@ -1,13 +1,12 @@
-import { Anchor, Box, Button, Divider, Group, Stack, Text, Title } from "@mantine/core";
+import { Anchor, Box, Button, Stack, Title } from "@mantine/core";
 import { FunctionComponent } from "react";
 import { Input } from "../../ui/Input";
 
 import { ReactComponent as EmailIcon } from "../../assets/icons/EmailIcon.svg";
 import { ReactComponent as PasswordIcon } from "../../assets/icons/Key.svg";
-import { ReactComponent as GoogleIcon } from "../../assets/icons/GoogleIcon.svg";
-import { ReactComponent as FacebookIcon } from "../../assets/icons/FacebookIcon.svg";
 import { PasswordInput } from "../../ui/PasswordInput";
 import { useForm } from "@mantine/form";
+import { SingInValidation } from "../../common/helpers/validation";
 
 const SingIn: FunctionComponent = () => {
   const form = useForm({
@@ -15,10 +14,7 @@ const SingIn: FunctionComponent = () => {
       email: "",
       password: "",
     },
-    validate: {
-      email: (val: string) => (!val ? "Email is required" : null),
-      password: (val: string) => (!val ? "Password is required" : null),
-    },
+    validate: SingInValidation,
   });
 
   return (
@@ -93,81 +89,6 @@ const SingIn: FunctionComponent = () => {
           </Button>
         </Stack>
       </form>
-
-      <Divider
-        label="Or Log In with"
-        labelPosition="center"
-        color="var(--mantine-color-neutral-6)"
-        w="27.5rem"
-        mt="0.5rem"
-        styles={(theme) => ({
-          label: {
-            ...theme.other.buttonLG,
-            color: "var(--mantine-color-neutral-12)",
-          },
-        })}
-      />
-
-      <Group align="center">
-        <Button
-          leftSection={<GoogleIcon />}
-          variant="outline"
-          w="13rem"
-          h="3rem"
-          styles={(theme) => ({
-            root: {
-              border: "0.125rem solid var(--mantine-color-primary-0)",
-            },
-            label: {
-              ...theme.other.buttonLG,
-              color: "var(--mantine-color-primary-0)",
-            },
-          })}
-        >
-          Google
-        </Button>
-        <Button
-          leftSection={<FacebookIcon />}
-          variant="outline"
-          w="13rem"
-          h="3rem"
-          styles={(theme) => ({
-            root: {
-              border: "0.125rem solid var(--mantine-color-primary-0)",
-            },
-            label: {
-              ...theme.other.buttonLG,
-              color: "var(--mantine-color-primary-0)",
-            },
-          })}
-        >
-          Facebook
-        </Button>
-      </Group>
-
-      <Group align="center" mt="0.5rem">
-        <Text
-          styles={(theme) => ({
-            root: {
-              color: "var(--mantine-color-neutral-8)",
-              ...theme.other.buttonLG,
-            },
-          })}
-        >
-          Don&apos;t have an account?
-        </Text>
-        <Anchor
-          href="#"
-          styles={(theme) => ({
-            root: {
-              ...theme.other.buttonLG,
-              color: "var(--mantine-color-primary-0)",
-            },
-          })}
-        >
-          sign up
-        </Anchor>
-      </Group>
     </Stack>
   );
 };
