@@ -13,8 +13,10 @@ interface AuthModalProps {
   onClose: () => void;
 }
 
+type AuthTabs = "login" | "register";
+
 const AuthModal: FunctionComponent<AuthModalProps> = ({ opened, onClose }) => {
-  const [activeTab, setActiveTab] = useState<"login" | "register">("login");
+  const [activeTab, setActiveTab] = useState<AuthTabs>("login");
 
   return (
     <Modal
@@ -26,8 +28,8 @@ const AuthModal: FunctionComponent<AuthModalProps> = ({ opened, onClose }) => {
       classNames={{ body: classes.modal }}
     >
       <Tabs
-        value={activeTab} onChange={(val: string | null) => 
-          setActiveTab(val as "login" | "register")}
+        value={activeTab}
+        onChange={(val: string | null) => setActiveTab(val as AuthTabs)}
         classNames={{
           tab: classes.tab,
           tabLabel: classes.tabLabel,
@@ -81,7 +83,7 @@ const AuthModal: FunctionComponent<AuthModalProps> = ({ opened, onClose }) => {
               },
             })}
           >
-          Google
+            Google
           </Button>
           <Button
             leftSection={<FacebookIcon />}
@@ -98,7 +100,7 @@ const AuthModal: FunctionComponent<AuthModalProps> = ({ opened, onClose }) => {
               },
             })}
           >
-          Facebook
+            Facebook
           </Button>
         </Group>
 
@@ -111,8 +113,9 @@ const AuthModal: FunctionComponent<AuthModalProps> = ({ opened, onClose }) => {
               },
             })}
           >
-            {activeTab === "login" ? "Don't have an account?" : 
-              "Already have an account?"}
+            {activeTab === "login"
+              ? "Don't have an account?"
+              : "Already have an account?"}
           </Text>
           <Anchor
             href="#"

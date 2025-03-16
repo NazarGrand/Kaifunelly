@@ -45,7 +45,7 @@ const SingUp: FunctionComponent = () => {
                 onChange={(name) => form.setFieldValue("name", name)}
                 label="Full name"
                 leftSection={<UserIcon />}
-                error={form.errors.name?.toString()}
+                error={form.errors.name as string}
               />
             </Box>
 
@@ -56,7 +56,7 @@ const SingUp: FunctionComponent = () => {
                 label="E-mail"
                 placeholder="Your email"
                 leftSection={<EmailIcon />}
-                error={form.errors.email?.toString()}
+                error={form.errors.email as string}
               />
             </Box>
 
@@ -67,7 +67,7 @@ const SingUp: FunctionComponent = () => {
                 label="Password"
                 placeholder="Your password"
                 leftSection={<PasswordIcon />}
-                error={form.errors.password?.toString()}
+                error={form.errors.password as string}
               />
             </Box>
           </Stack>

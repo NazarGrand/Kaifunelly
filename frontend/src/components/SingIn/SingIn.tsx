@@ -41,7 +41,7 @@ const SingIn: FunctionComponent = () => {
               label="E-mail"
               placeholder="Your email"
               leftSection={<EmailIcon />}
-              error={form.errors.email?.toString()}
+              error={form.errors.email as string}
             />
           </Box>
 
@@ -52,7 +52,7 @@ const SingIn: FunctionComponent = () => {
               label="Password"
               placeholder="Your password"
               leftSection={<PasswordIcon />}
-              error={form.errors.password?.toString()}
+              error={form.errors.password as string}
             />
           </Box>
         </Stack>
