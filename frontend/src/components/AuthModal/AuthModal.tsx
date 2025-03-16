@@ -13,7 +13,7 @@ interface AuthModalProps {
   onClose: () => void;
 }
 
-type AuthTabs = "login" | "register";
+type AuthTabs = "login" | "register" | null;
 
 const AuthModal: FunctionComponent<AuthModalProps> = ({ opened, onClose }) => {
   const [activeTab, setActiveTab] = useState<AuthTabs>("login");
