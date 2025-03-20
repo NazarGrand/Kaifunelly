@@ -14,6 +14,9 @@
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "axios": "^1.8.3",
+    "js-cookie": "^3.0.5",
+    "memoize": "^10.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-scripts": "5.0.1",
@@ -48,6 +51,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@types/js-cookie": "^3.0.6",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-react-app": "^7.0.1",
